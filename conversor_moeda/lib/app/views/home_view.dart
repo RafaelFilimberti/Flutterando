@@ -1,7 +1,23 @@
+import 'package:conversor_moeda/app/components/currency_box.dart';
+import 'package:conversor_moeda/app/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 
-class HomeView extends StatelessWidget {
-  const HomeView({super.key});
+class HomeView extends StatefulWidget {
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  final TextEditingController toText = TextEditingController();
+
+  final TextEditingController fromText = TextEditingController();
+  late HomeController homeController;
+
+  @override
+  void initState() {
+    super.initState();
+    homeController = HomeController(toText: toText, fromText: fromText);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,8 +27,8 @@ class HomeView extends StatelessWidget {
         height: MediaQuery.of(context).size.height,
         child: Padding(
           padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
+            left: 30,
+            right: 30,
             top: 100,
             bottom: 20,
           ),
@@ -27,64 +43,39 @@ class HomeView extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(height: 40),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: SizedBox(
-                        height: 56,
-                        child: DropdownButton(
-                          isExpanded: true,
-                          underline: Container(height: 1, color: Colors.amber),
-                          items: [
-                            DropdownMenuItem(
-                              value: 'real',
-                              child: Text('Real'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'dolar',
-                              child: Text('Dolar'),
-                            ),
-                          ],
-                          onChanged: (value) {},
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.blue.shade300,
-                              ),
-                            ),
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.blue.shade300,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              SizedBox(height: 50),
+              CurrencyBox(
+                selectedItem: homeController.toCurrency,
+                controller: toText,
+                items: homeController.currencies,
+                onChanged: (model) {
+                  setState(() {
+                    homeController.toCurrency = model!;
+                  });
+                },
+              ),
+              SizedBox(height: 10),
+              CurrencyBox(
+                selectedItem: homeController.fromCurrency,
+                controller: fromText,
+                items: homeController.currencies,
+                onChanged: (model) {
+                     setState(() {
+                    homeController.fromCurrency = model!;
+                  });
+                },
               ),
               SizedBox(height: 50),
               ElevatedButton(
-              style:ElevatedButton.styleFrom(
-                backgroundColor: Colors.greenAccent,
-                foregroundColor: Colors.black,
-              ) ,                 
-                onPressed: () {}, child: Text('CONVERTER')),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.greenAccent,
+                  foregroundColor: Colors.black,
+                ),
+                onPressed: () {
+                  homeController.convert();
+                },
+                child: Text('CONVERTER'),
+              ),
             ],
           ),
         ),
