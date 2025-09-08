@@ -1,29 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/src/controllers/home_controller.dart';
 
-class HomePage extends StatelessWidget {
-  _success() {
-    return ListView.builder(
-      itemCount: 20,
-      itemBuilder: (context, index) {
-        return ListTile(title: Text('item $index'));
-      },
-    );
-  }
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
 
-  _error() {
-    return Center(
-      child: ElevatedButton(onPressed: () {}, child: Text('tentar novamente')),
-    );
-  }
-
-  _loading() {
-    return Center(child: CircularProgressIndicator());
-  }
-
-  _start() {
-    return Container();
-  }
+class _HomePageState extends State<HomePage> {
+  final controller = HomeController();
 
   stateManagement(HomeState state) {
     switch (state) {
@@ -45,11 +29,65 @@ class HomePage extends StatelessWidget {
   }
 
   @override
+  initState() {
+    super.initState();
+
+    controller.start();
+  }
+
+  _success() {
+    return ListView.builder(
+      itemCount: controller.todos.length,
+      itemBuilder: (context, index) {
+        var todo = controller.todos[index];
+        return ListTile(
+          leading: Checkbox(value: todo.completed, onChanged: (value) {}),
+          title: Text(todo.title ?? ''),
+        );
+      },
+    );
+  }
+
+  _error() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () {
+          controller.start();
+        },
+        child: Text('tentar novamente'),
+      ),
+    );
+  }
+
+  _loading() {
+    return Center(child: CircularProgressIndicator());
+  }
+
+  _start() {
+    return Container();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('List Todo\'S')),
+      appBar: AppBar(
+        title: Text('List Todo\'S'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh_outlined),
+            onPressed: () {
+              controller.start();
+            },
+          ),
+        ],
+      ),
 
-      body: stateManagement(HomeState.success),
+      body: AnimatedBuilder(
+        animation: controller.state,
+        builder: (context, child) {
+          return stateManagement(controller.state.value);
+        },
+      ),
     );
   }
 }

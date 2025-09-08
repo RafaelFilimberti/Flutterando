@@ -1,23 +1,26 @@
+import 'package:flutter/material.dart';
 import 'package:todo_list/src/models/todo_model.dart';
 import 'package:todo_list/src/repositories/todo_repository.dart';
+
+enum HomeState { start, loading, success, error }
 
 class HomeController {
   List<TodoModel> todos = [];
   final TodoRepository _repository;
-  HomeState state = HomeState.start;
+  final ValueNotifier<HomeState> state = ValueNotifier<HomeState>(HomeState.start);
 
   HomeController([TodoRepository? repository])
     : _repository = repository ?? TodoRepository();
 
   Future start() async {
-    state = HomeState.loading;
+    state.value = HomeState.loading;
     try {
       todos = await _repository.FetchTodos();
-      state = HomeState.success;
+      state.value = HomeState.success;
     } catch (e) {
-      state = HomeState.error;
+      state.value = HomeState.error;
     }
   }
 }
 
-enum HomeState { start, loading, success, error }
+
