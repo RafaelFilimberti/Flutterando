@@ -14,7 +14,8 @@ void main() {
   final repository = TodoRepository(dio);
 
   test('deve trazer uma lista de TodoModel', () async {
-    when(dio.get(any as String)).thenAnswer(
+    // ignore: cast_from_null_always_fails
+    when(dio.get('https://jsonplaceholder.typicode.com/todos')).thenAnswer(
       (_) async => Response(
         data: jsonDecode(jsonData),
         statusCode: 200, // ✅ Obrigatório
