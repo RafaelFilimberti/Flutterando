@@ -7,7 +7,9 @@ enum HomeState { start, loading, success, error }
 class HomeController {
   List<TodoModel> todos = [];
   final TodoRepository _repository;
-  final ValueNotifier<HomeState> state = ValueNotifier<HomeState>(HomeState.start);
+  final ValueNotifier<HomeState> state = ValueNotifier<HomeState>(
+    HomeState.start,
+  );
 
   HomeController([TodoRepository? repository])
     : _repository = repository ?? TodoRepository();
@@ -22,5 +24,3 @@ class HomeController {
     }
   }
 }
-
-
